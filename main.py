@@ -59,8 +59,8 @@ def create_tables(conn, cur):
         CREATE TABLE IF NOT EXISTS candidates (
             candidate_id VARCHAR(255) PRIMARY KEY,
             candidate_name VARCHAR(255),
-            date_of_birth DATE,
-            gender VARCHAR(255),
+            candidate_date_of_birth DATE,
+            candidate_gender VARCHAR(255),
             party_affiliation VARCHAR(255),
             education TEXT,
             experience TEXT,
@@ -74,8 +74,8 @@ def create_tables(conn, cur):
         CREATE TABLE IF NOT EXISTS voters (
             voter_id VARCHAR(255) PRIMARY KEY,
             voter_name VARCHAR(255),
-            date_of_birth VARCHAR(255),
-            gender VARCHAR(255),
+            voter_date_of_birth VARCHAR(255),
+            voter_gender VARCHAR(255),
             nationality VARCHAR(255),
             registration_number VARCHAR(255),
             address_street VARCHAR(255),
@@ -88,7 +88,7 @@ def create_tables(conn, cur):
             cell_number VARCHAR(255),
             picture TEXT,
             registered_age INTEGER,
-            polling_station VARCHAR(255)
+            polling_station VARCHAR(255) 
         )
     """)
     cur.execute("""
@@ -109,8 +109,8 @@ def generates_candidates(candidate_num, total_parties):
         return {
             "candidate_id": user_data['login']['uuid'],
             "candidate_name": f"{user_data['name']['first']} {user_data['name']['last']}",
-            "date_of_birth": datetime.strptime(user_data['dob']['date'], "%Y-%m-%dT%H:%M:%S.%fZ").date(),
-            "gender": user_data['gender'],
+            "candidate_date_of_birth": datetime.strptime(user_data['dob']['date'], "%Y-%m-%dT%H:%M:%S.%fZ").date(),
+            "candidate_gender": user_data['gender'],
             "party_affiliation": PARTIES[candidate_num % total_parties],
             "education": random.choice(EDUCATION_OPTIONS),
             "experience": random.choice(EXPERIENCE_OPTIONS),
@@ -125,10 +125,10 @@ def generates_candidates(candidate_num, total_parties):
 def insert_candidates(conn, cur, candidates):
     try:
         cur.execute("""
-            INSERT INTO candidates (candidate_id, candidate_name, date_of_birth, gender, party_affiliation, education, experience, biography, campaign_platform, campaign_funds,photo_url)
+            INSERT INTO candidates (candidate_id, candidate_name, candidate_date_of_birth, candidate_gender, party_affiliation, education, experience, biography, campaign_platform, campaign_funds,photo_url)
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """, (
-            candidates['candidate_id'], candidates['candidate_name'], candidates['date_of_birth'], candidates['gender'],
+            candidates['candidate_id'], candidates['candidate_name'], candidates['candidate_date_of_birth'], candidates['candidate_gender'],
             candidates['party_affiliation'],
             candidates["education"], candidates['experience'], candidates['biography'],
             candidates['campaign_platform'], candidates['campaign_funds'], candidates['photo_url']))
@@ -144,8 +144,8 @@ def generates_voter():
         return {
             "voter_id": user_data['login']['uuid'],
             "voter_name": f"{user_data['name']['first']} {user_data['name']['last']}",
-            "date_of_birth": user_data['dob']['date'],
-            "gender": user_data['gender'],
+            "voter_date_of_birth": user_data['dob']['date'],
+            "voter_gender": user_data['gender'],
             "nationality": user_data['nat'],
             "registration_number": user_data['login']['username'],
             "address": {
@@ -169,10 +169,10 @@ def insert_voters(conn, cur, voter):
     while True:
         try:
             cur.execute("""
-                INSERT INTO voters (voter_id, voter_name, date_of_birth, gender, nationality, registration_number, address_street, address_city, address_state, address_country, address_postcode, email, phone_number, cell_number, picture, registered_age, polling_station)
+                INSERT INTO voters (voter_id, voter_name, voter_date_of_birth, voter_gender, nationality, registration_number, address_street, address_city, address_state, address_country, address_postcode, email, phone_number, cell_number, picture, registered_age, polling_station)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s,%s,%s,%s,%s,%s,%s,%s)
             """, (
-                voter["voter_id"], voter['voter_name'], voter['date_of_birth'], voter['gender'],
+                voter["voter_id"], voter['voter_name'], voter['voter_date_of_birth'], voter['voter_gender'],
                 voter['nationality'], voter['registration_number'], voter['address']['street'],
                 voter['address']['city'], voter['address']['state'], voter['address']['country'],
                 voter['address']['postcode'], voter['email'], voter['phone_number'],

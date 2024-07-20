@@ -1,3 +1,5 @@
+import time
+
 import simplejson as json
 import random
 from datetime import datetime
@@ -9,13 +11,13 @@ from confluent_kafka import Consumer, KafkaError, KafkaException, SerializingPro
 from main import delivery_report
 
 conf ={
-    'bootstrap.server':'localhost:9092'
+    'bootstrap.servers':'localhost:9092',
 }
 
 consumer = Consumer(conf | {
     'group.id':'voting-group',
     'auto.offset.reset' : 'earliest',
-    'enable.auto.commit':False
+    'enable.auto.commit': False
 })
 
 producer =SerializingProducer(conf)
@@ -91,5 +93,6 @@ if __name__ =="__main__":
 
                 except Exception as e:
                     print(e)
+            time.sleep(0.5)
     except Exception as e:
         print(e)
